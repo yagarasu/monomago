@@ -8,7 +8,7 @@ class State extends EventTarget {
     this.game = game
   }
 
-  update(_ts: DOMHighResTimeStamp, _delta: number) {}
+  update(_elapsed: DOMHighResTimeStamp, _delta: number) {}
 }
 
 export default State

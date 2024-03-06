@@ -64,7 +64,7 @@ class Game extends EventTarget {
     this.lastTick = ts;
     const requiredElapsed = 1_000 / this.options.fps
     const delta = elapsed > 0 ? requiredElapsed / elapsed : 1;
-    this.stateManager.state?.update(ts, delta)
+    this.stateManager.state?.update(elapsed, delta)
     this.screen.render()
   }
 }
