@@ -1,7 +1,10 @@
 export const StateEventTypes = {
+  STATE_STARTED: 'statestarted',
+  STATE_ENDED: 'stateended',
   STATE_PUSHED: 'statepushed',
   STATE_POPPED: 'statepopped',
-  STATE_RESUMED: 'stateresumed'
+  STATE_PAUSED: 'statepaused',
+  STATE_RESUMED: 'stateresumed',
 }
 
 class StateEvent extends Event {

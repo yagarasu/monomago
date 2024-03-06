@@ -2,14 +2,19 @@ import ScreenElement from "./ScreenElement";
 import { Renderable } from "./types";
 
 class Layer extends ScreenElement implements Renderable {
-  children: Renderable[] = []
+  children: ScreenElement[] = []
 
-  addChild(child: Renderable, position: number = -1) {
+  addChild(child: ScreenElement, position: number = -1) {
     this.children.splice(position, 0, child)
   }
 
   removeChild(position: number) {
     return this.children.splice(position, 1)
+  }
+
+  removeById(id: string) {
+    const idx = this.children.findIndex((child) => child.id === id)
+    this.removeChild(idx)
   }
 
   render(ctx: CanvasRenderingContext2D) {

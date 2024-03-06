@@ -1,7 +1,7 @@
 import State from "./stateManagement/State"
 import Screen from "./graphics/Screen"
 import StateManager from "./stateManagement/StateManager"
-import StateEvent, { StateEventTypes } from "./stateManagement/StateEvent"
+import Keyboard from "./input/Keyboard"
 
 export type GameOptions = {
   width: number
@@ -20,6 +20,7 @@ class Game extends EventTarget {
   options: GameOptions
   screen: Screen
   stateManager: StateManager
+  keyboard: Keyboard;
   running: boolean = false
   timer?: number
   lastTick?: DOMHighResTimeStamp
@@ -37,6 +38,7 @@ class Game extends EventTarget {
       height: this.options.height,
     })
     this.stateManager = new StateManager()
+    this.keyboard = new Keyboard()
   }
 
   run(initialState?: State) {
