@@ -12,7 +12,7 @@ import State from "../lib/stateManagement/State";
 import { StateEventTypes } from "../lib/stateManagement/StateEvent";
 import sprite from './sprite.png'
 
-class MainMenuState extends State {
+class TestState extends State {
   ui: Layer
   rect: FillRect
   rect2: FillRect
@@ -83,4 +83,4 @@ class MainMenuState extends State {
   }
 }
 
-export default MainMenuState
+export default TestState

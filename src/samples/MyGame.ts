@@ -1,6 +1,6 @@
 import Game from "../lib/Game";
 import State from "../lib/stateManagement/State";
-import MainMenuState from "./MainMenuState";
+import MainMenuState from "./MainMenuState/MainMenuState";
 
 class MyGame extends Game {
   states: Record<string, State> = {
