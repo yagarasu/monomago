@@ -2,6 +2,7 @@ import State from "./stateManagement/State"
 import Screen from "./graphics/Screen"
 import StateManager from "./stateManagement/StateManager"
 import Keyboard from "./input/Keyboard"
+import TweenManager from "./animation/TweenManager"
 
 export type GameOptions = {
   width: number
@@ -20,7 +21,8 @@ class Game extends EventTarget {
   options: GameOptions
   screen: Screen
   stateManager: StateManager
-  keyboard: Keyboard;
+  keyboard: Keyboard
+  tweenManager: TweenManager
   running: boolean = false
   timer?: number
   lastTick?: DOMHighResTimeStamp
@@ -39,6 +41,7 @@ class Game extends EventTarget {
     })
     this.stateManager = new StateManager()
     this.keyboard = new Keyboard()
+    this.tweenManager = new TweenManager()
   }
 
   run(initialState?: State) {
@@ -65,6 +68,7 @@ class Game extends EventTarget {
     const requiredElapsed = 1_000 / this.options.fps
     const delta = elapsed > 0 ? requiredElapsed / elapsed : 1;
     this.stateManager.state?.update(elapsed, delta)
+    this.tweenManager.update(elapsed)
     this.screen.render()
   }
 }

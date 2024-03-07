@@ -1,3 +1,4 @@
+import { clamp } from '../math'
 import Tween from './Tween'
 import { TweenEvent, TweenEventTypes } from './TweenEvent'
 
@@ -14,7 +15,7 @@ class TweenBoomerang<T> extends Tween<T> {
 
   updateForward(elapsed: number) {
     this.elapsed += elapsed
-    const t = Math.min(this.elapsed / this.duration, 1)
+    const t = clamp(this.elapsed / this.duration, 0, 1)
     this.updateValuesForT(t, elapsed)
     if (t === 1) {
       this.reverse = true
@@ -24,7 +25,7 @@ class TweenBoomerang<T> extends Tween<T> {
 
   updateReverse(elapsed: number) {
     this.elapsed -= elapsed
-    const t = Math.max(this.elapsed / this.duration, 0)
+    const t = clamp(this.elapsed / this.duration, 0, 1)
     this.updateValuesForT(t, elapsed)
     if (t === 0) {
       this.reverse = false

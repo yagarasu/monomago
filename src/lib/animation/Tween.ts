@@ -1,9 +1,12 @@
+import { v4 as uuid } from "uuid"
 import { linear } from "../math/easing"
 import { Updatable } from "../types"
 import { TweenEvent, TweenEventTypes } from "./TweenEvent"
 import { TweenableProperties, TweenableCurrentValues } from "./types"
+import { clamp } from "../math"
 
-class Tween<T> extends EventTarget implements Updatable {
+class Tween<T = unknown> extends EventTarget implements Updatable {
+  id: string
   target: T
   duration = 3_000
   elapsed = 0
@@ -16,16 +19,12 @@ class Tween<T> extends EventTarget implements Updatable {
 
   constructor(target: T, properties: TweenableProperties<T>, updateCallback: (currentValues: TweenableCurrentValues<T>) => void) {
     super()
+    this.id = uuid()
     this.target = target
     this.properties = properties
     this.initialValues = {}
     this.updateCallback = updateCallback
-    let key: keyof TweenableProperties<T>
-    for (key in properties) {
-      if (Object.prototype.hasOwnProperty.call(properties, key)) {
-        this.initialValues[key] = target[key]
-      }
-    }
+    this.saveInitialValues()
   }
 
   stop() {
@@ -36,12 +35,18 @@ class Tween<T> extends EventTarget implements Updatable {
     this.enabled = true
   }
 
+  reset() {
+    this.saveInitialValues()
+    this.elapsed = 0
+    this.done = false
+  }
+
   update(elapsed: DOMHighResTimeStamp) {
     if (this.done) return
     if (!this.enabled) return
     if (this.elapsed === 0) this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_START, { startedAt: performance.now() }))
     this.elapsed += elapsed
-    const t = Math.min(this.elapsed / this.duration, 1)
+    const t = clamp(this.elapsed / this.duration, 0, 1)
     this.updateValuesForT(t, elapsed)
     if (t === 1) {
       this.done = true
@@ -67,6 +72,15 @@ class Tween<T> extends EventTarget implements Updatable {
       currentValues,
     }))
     this.updateCallback(currentValues)
+  }
+
+  saveInitialValues() {
+    let key: keyof TweenableProperties<T>
+    for (key in this.properties) {
+      if (Object.prototype.hasOwnProperty.call(this.properties, key)) {
+        this.initialValues[key] = this.target[key]
+      }
+    }
   }
 }
 

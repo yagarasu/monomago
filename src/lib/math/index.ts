@@ -1,3 +1,5 @@
-export function clamp(value: number, max: number) {
-  return value > max ? max : value
+export function clamp(value: number, min?: number, max?: number) {
+  if (min !== undefined && value < min) return min
+  if (max !== undefined && value > max) return max
+  return value
 }
