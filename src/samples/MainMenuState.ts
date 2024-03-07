@@ -1,12 +1,16 @@
 import Game from "../lib/Game";
 import Tween from "../lib/animation/Tween";
 import { TweenEventTypes } from "../lib/animation/TweenEvent";
+import AnimatedSprite from "../lib/graphics/AnimatedSprite";
+import AtlasMaker from "../lib/graphics/AtlasMaker";
 import Color from "../lib/graphics/Color";
 import FillRect from "../lib/graphics/FillRect";
 import Layer from "../lib/graphics/Layer";
+import Sprite from "../lib/graphics/Sprite";
 import Vector from "../lib/math/Vector";
 import State from "../lib/stateManagement/State";
 import { StateEventTypes } from "../lib/stateManagement/StateEvent";
+import sprite from './sprite.png'
 
 class MainMenuState extends State {
   ui: Layer
@@ -14,6 +18,8 @@ class MainMenuState extends State {
   rect2: FillRect
   rect3: FillRect
   color: Color = new Color(Math.random() * 255, Math.random() * 255, Math.random() * 255, 1)
+  sprite: Sprite
+  animSprite: AnimatedSprite
 
   constructor(game: Game) {
     super(game)
@@ -25,6 +31,15 @@ class MainMenuState extends State {
     this.ui.addChild(this.rect)
     this.ui.addChild(this.rect2)
     this.ui.addChild(this.rect3)
+    
+    this.sprite = new Sprite(sprite, 10, 260, { x: 0, y: 0, width: 24, height: 24 })
+    this.sprite.width = 48
+    this.sprite.height = 48
+    this.ui.addChild(this.sprite)
+
+    this.animSprite = new AnimatedSprite(sprite, 10, 300, 48, 48, AtlasMaker.atlasFromGrid(24, 1, 24, 24), { run: { indices: [1,2,3,4], durations: 100 } })
+    this.animSprite.currentAnimation = 'run'
+    this.ui.addChild(this.animSprite)
 
     this.game.tweenManager.createTween(this.rect, { x: 660 }, (v) => this.rect.x = v.x ?? 0)
     this.game.tweenManager.createLoop(this.rect2, { x: 660 }, (v) => this.rect2.x = v.x ?? 0)

@@ -24,7 +24,7 @@ class TweenBoomerang<T> extends Tween<T> {
   }
 
   updateReverse(elapsed: number) {
-    this.elapsed -= elapsed
+    this.elapsed = clamp(this.elapsed - elapsed, 0)
     const t = clamp(this.elapsed / this.duration, 0, 1)
     this.updateValuesForT(t, elapsed)
     if (t === 0) {

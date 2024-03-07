@@ -13,3 +13,8 @@ export interface Positionable {
 export interface Renderable {
   render: (ctx: CanvasRenderingContext2D) => void
 }
+
+export type AnimationDefinition = {
+  indices: number[],
+  durations: number[] | number,
+}
