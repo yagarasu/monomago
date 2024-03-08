@@ -13,15 +13,12 @@ import MenuSelectUpCommand from "./MenuSelectUpCommand";
 class MainMenuState extends State {
   commandInvoker: CommandInvoker
   inputMapper: InputMapper
-
-  otherScreens = {
-    info: new InfoState(this.game)
-  }
   
   ui: Layer = new Layer()
   selection: Label
   buttonList: ButtonList = new ButtonList([
-    { label: 'Extra Info', screen: this.otherScreens.info }
+    { label: 'Movement demo' },
+    { label: 'Extra Info' },
   ])
 
   constructor(game: Game) {
@@ -40,13 +37,13 @@ class MainMenuState extends State {
       'ArrowUp': () => new MenuSelectUpCommand(this.buttonList),
       'ArrowDown': () => new MenuSelectDownCommand(this.buttonList),
     }, this.game.keyboard, this.commandInvoker)
-    
-    this.game.screen.root.addChild(this.ui)
 
-    this.addEventListener(StateEventTypes.STATE_STARTED, () => {
+    this.addEventListener(StateEventTypes.STATE_STARTED, (e) => {
+      if (e.target !== this) return
       this.game.screen.root.addChild(this.ui)
     })
-    this.addEventListener(StateEventTypes.STATE_ENDED, () => {
+    this.addEventListener(StateEventTypes.STATE_ENDED, (e) => {
+      if (e.target !== this) return
       this.game.screen.root.removeById(this.ui.id)
     })
   }

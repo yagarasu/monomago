@@ -5,6 +5,7 @@ class Layer extends ScreenElement implements Renderable {
   children: ScreenElement[] = []
 
   addChild(child: ScreenElement, position: number = -1) {
+    console.log('>> add child to', this.id, child)
     this.children.splice(position, 0, child)
   }
 

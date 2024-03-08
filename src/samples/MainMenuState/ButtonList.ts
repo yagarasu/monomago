@@ -1,10 +1,9 @@
 import ScreenElement from "../../lib/graphics/ScreenElement";
 import Sprite from "../../lib/graphics/Sprite";
 import { Renderable } from "../../lib/graphics/types";
-import State from "../../lib/stateManagement/State";
 import arrowSprite from '../sprite.png'
 
-type ButtonListItem = { label: string, screen: State }
+type ButtonListItem = { label: string }
 
 class ButtonList extends ScreenElement implements Renderable {
   items: ButtonListItem[] = []
