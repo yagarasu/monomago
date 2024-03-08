@@ -1,7 +1,21 @@
-export interface Updatable {
-  update: (ts: DOMHighResTimeStamp, delta: number) => void
+import Scene from "./Scene"
+
+export type Cradle = any
+
+export type GameOptions = {
+  width: number
+  height: number
+  fps: number
 }
 
-export interface Command {
-  execute: () => void
+export type SceneFactory = (...deps: unknown[]) => Scene
+export type SceneInstanceMode = 'INSTANCE' | 'SINGLETON'
+export type SceneRegistration = {
+  sceneFactory: SceneFactory,
+  mode: SceneInstanceMode,
+}
+export type SceneRegister = Record<string, SceneRegistration>
+
+export interface Component {
+  handler: string
 }

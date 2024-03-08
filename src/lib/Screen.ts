@@ -1,4 +1,4 @@
-import Layer from "./Layer"
+// import Layer from "./Layer"
 
 export type ScreenOptions = {
   width: number
@@ -9,7 +9,7 @@ class Screen {
   options: ScreenOptions
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
-  root: Layer
+  // root: Layer
 
   constructor(parent: HTMLElement, options: ScreenOptions) {
     this.options = options
@@ -20,7 +20,7 @@ class Screen {
     const context = this.canvas.getContext('2d')
     if (!context) throw new Error('Unable to get 2d context from canvas')
     this.context = context
-    this.root = new Layer()
+    // this.root = new Layer()
     this.clear()
   }
 
@@ -33,7 +33,7 @@ class Screen {
 
   render() {
     this.clear()
-    this.root.render(this.context)
+    // this.root.render(this.context)
   }
 }
 
