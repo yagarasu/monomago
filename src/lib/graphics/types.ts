@@ -1,3 +1,5 @@
+import Vector from "../math/Vector"
+
 export type Rect = {
   x: number,
   y: number,
@@ -8,6 +10,7 @@ export type Rect = {
 export interface Positionable {
   x: number
   y: number
+  position: Vector
 }
 
 export interface Renderable {

@@ -6,6 +6,26 @@ class Vector {
     return new Vector(object.x, object.y)
   }
 
+  static zeroVector() {
+    return new Vector(0, 0)
+  }
+
+  static upVector() {
+    return new Vector(0, -1)
+  }
+
+  static downVector() {
+    return new Vector(0, 1)
+  }
+
+  static leftVector() {
+    return new Vector(-1, 0)
+  }
+
+  static rightVector() {
+    return new Vector(1, 0)
+  }
+
   constructor(x: number, y: number) {
     this.x = x
     this.y = y

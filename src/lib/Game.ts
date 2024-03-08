@@ -44,6 +44,10 @@ class Game extends EventTarget {
     this.tweenManager = new TweenManager()
   }
 
+  get screenRoot() {
+    return this.screen.root
+  }
+
   run(initialState?: State) {
     if (this.running) throw new Error('Game is already running')
     if (initialState) this.stateManager.push(initialState)

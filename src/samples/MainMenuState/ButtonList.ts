@@ -1,16 +1,13 @@
 import ScreenElement from "../../lib/graphics/ScreenElement";
 import Sprite from "../../lib/graphics/Sprite";
 import { Renderable } from "../../lib/graphics/types";
+import State from "../../lib/stateManagement/State";
 import arrowSprite from '../sprite.png'
 
+type ButtonListItem = { label: string, screen: State }
+
 class ButtonList extends ScreenElement implements Renderable {
-  items: {
-    label: string,
-  }[] = [
-    { label: 'Cosa 1' },
-    { label: 'Cosa 2' },
-    { label: 'Cosa 3' },
-  ]
+  items: ButtonListItem[] = []
 
   _arrow: Sprite = new Sprite(arrowSprite, 0, 0, { x: 0, y: 0, width: 24, height: 24 })
 
@@ -18,6 +15,11 @@ class ButtonList extends ScreenElement implements Renderable {
 
   get maxItemIndex() {
     return this.items.length - 1
+  }
+
+  constructor(items: ButtonListItem[] = []) {
+    super()
+    this.items = items
   }
 
   render(ctx: CanvasRenderingContext2D): void {

@@ -5,6 +5,7 @@ import Layer from "../../lib/graphics/Layer";
 import InputMapper from "../../lib/input/InputMapper";
 import State from "../../lib/stateManagement/State";
 import { StateEventTypes } from "../../lib/stateManagement/StateEvent";
+import InfoState from "../InfoState/InfoState";
 import ButtonList from "./ButtonList";
 import MenuSelectDownCommand from "./MenuSelectDownCommand";
 import MenuSelectUpCommand from "./MenuSelectUpCommand";
@@ -12,10 +13,16 @@ import MenuSelectUpCommand from "./MenuSelectUpCommand";
 class MainMenuState extends State {
   commandInvoker: CommandInvoker
   inputMapper: InputMapper
+
+  otherScreens = {
+    info: new InfoState(this.game)
+  }
   
   ui: Layer = new Layer()
   selection: Label
-  buttonList: ButtonList = new ButtonList()
+  buttonList: ButtonList = new ButtonList([
+    { label: 'Extra Info', screen: this.otherScreens.info }
+  ])
 
   constructor(game: Game) {
     super(game)
