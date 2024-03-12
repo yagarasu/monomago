@@ -22,7 +22,7 @@ class InfoScene extends Scene {
 
   update(_elapsed: number, _delta: number) {
     if (this.keyboard.isKeyPressed('Escape')) {
-      console.log('>> update')
+      console.log('>> esc')
     }
   }
 }

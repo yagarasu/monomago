@@ -44,13 +44,11 @@ class TweenComponent<T extends object = {}> {
   update(elapsed: number, _delta: number) {
     if (this.done) return
     if (!this.enabled) return
-    // if (this.elapsed === 0) this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_START, { startedAt: performance.now() }))
     this.elapsed += elapsed
     const t = clamp(this.elapsed / this.duration, 0, 1)
     this.updateValuesForT(t, elapsed)
     if (t === 1) {
       this.done = true
-      // this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_END, { endedAt: performance.now() }))
     }
   }
 
@@ -65,12 +63,6 @@ class TweenComponent<T extends object = {}> {
         currentValues[key] = current
       }
     }
-    // this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_CHANGE, {
-    //   elapsedSinceLastUpdate: elapsed,
-    //   elapsed: this.elapsed,
-    //   t,
-    //   currentValues,
-    // }))
     this.updateCallback(currentValues)
   }
 }
