@@ -1,32 +1,42 @@
-import CommandInvoker from "../CommandInvoker";
 import Throttle from "../Throttle";
-import { Command, Updatable } from "../types";
+import { CommandCreatorMap, DisppatchCallback } from "../types";
 import Keyboard from "./Keyboard";
 
-type CommandCreator = () => Command
-type CommandCreatorMap = Record<string, CommandCreator>
+class InputMapper {
+  private map: CommandCreatorMap
+  private keyboard: Keyboard
+  private throttleManager: Throttle
+  private dispatchCallback: DisppatchCallback
 
-class InputMapper implements Updatable {
-  _map: CommandCreatorMap
-  _keyboard: Keyboard
-  _commandInvoker: CommandInvoker
-  _throttle: number
+  private _throttleTime: number = 200
 
-  constructor(commandCreatorMap: CommandCreatorMap = {}, keyboard: Keyboard, commandInvoker: CommandInvoker, throttle: number = 0) {
-    this._map = commandCreatorMap
-    this._keyboard = keyboard
-    this._commandInvoker = commandInvoker
-    this._throttle = throttle
-    Throttle.throttleFunction('enqueueCommand', 150, (key: string) => {
-      const commandCreator = this._map[key]
-      this._commandInvoker.enqueue(commandCreator())
+  get throttle() {
+    return this._throttleTime
+  }
+
+  constructor(
+    commandCreatorMap: CommandCreatorMap = {},
+    keyboard: Keyboard,
+    throttle: Throttle,
+    throttleTime: number,
+    dispatchCallback: DisppatchCallback
+  ) {
+    this.map = commandCreatorMap
+    this.keyboard = keyboard
+    this.throttleManager = throttle
+    this._throttleTime = throttleTime
+    this.dispatchCallback = dispatchCallback
+    
+    throttle.throttleFunction('handlePress', this._throttleTime, (key: string) => {
+      const command = this.map[key]()
+      this.dispatchCallback(command)
     })
   }
 
   update() {
-    for (const key in this._map) {
-      if (this._keyboard.isKeyPressed(key) && Object.prototype.hasOwnProperty.call(this._map, key)) {
-        Throttle.call('enqueueCommand', key)
+    for (const key in this.map) {
+      if (this.keyboard.isKeyPressed(key) && Object.prototype.hasOwnProperty.call(this.map, key)) {
+        this.throttleManager.call('handlePress', key)
       }
     }
   }

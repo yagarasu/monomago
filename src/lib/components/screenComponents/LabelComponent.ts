@@ -1,23 +1,26 @@
-import ScreenElement from "./ScreenElement";
-import { Renderable } from "./types";
+import { ScreenComponent } from "../handlers/ScreenComponentHandler";
 
-class Label extends ScreenElement implements Renderable {
+class LabelComponent implements ScreenComponent {
   text: string = ''
+  position = { x: 0, y: 0 }
   width: number = 0
   fill: string = '#ffffff'
   font: string = '16px monospace'
 
+  get handler() {
+    return 'ScreenComponentHandler'
+  }
+
   constructor(text: string= '', x = 0, y = 0, width = 0) {
-    super()
     this.text = text
-    this.x = x
-    this.y = y
+    this.position.x = x
+    this.position.y = y
     this.width = width
   }
 
   render(ctx: CanvasRenderingContext2D) {
     ctx.save()
-    ctx.translate(this.x, this.y)
+    ctx.translate(this.position.x, this.position.y)
     ctx.fillStyle = this.fill
     ctx.font = this.font
     ctx.textBaseline = 'hanging'
@@ -26,4 +29,4 @@ class Label extends ScreenElement implements Renderable {
   }
 }
 
-export default Label
+export default LabelComponent

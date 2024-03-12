@@ -1,31 +1,39 @@
-import ScreenElement from "./ScreenElement";
+import { ScreenComponent } from "../handlers/ScreenComponentHandler";
 
-class Paragraph extends ScreenElement {
-  #text: string = ''
+class ParagraphComponent implements ScreenComponent {
+  private _text: string = ''
+  position = { x: 0, y: 0 }
   words: string[] = []
   width: number = 100
   lineHeight: number = 16 + 8
   fill: string = '#ffffff'
   font: string = '16px monospace'
 
+  get handler() {
+    return 'ScreenComponentHandler'
+  }
+
   constructor(text: string = '') {
-    super()
-    this.#text = text
+    this._text = text
     this.calculateWords()
   }
 
   set text(text: string) {
-    this.#text = text
+    this._text = text
     this.calculateWords()
   }
 
+  get text() {
+    return this._text
+  }
+
   calculateWords() {
-    this.words = this.#text.split(' ')
+    this.words = this._text.split(' ')
   }
 
   render(ctx: CanvasRenderingContext2D): void {
     ctx.save()
-    ctx.translate(this.x, this.y)
+    ctx.translate(this.position.x, this.position.y)
     ctx.fillStyle = this.fill
     ctx.font = this.font
     ctx.textBaseline = 'hanging'
@@ -49,4 +57,4 @@ class Paragraph extends ScreenElement {
   }
 }
 
-export default Paragraph
+export default ParagraphComponent

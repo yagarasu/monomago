@@ -1,14 +1,14 @@
-import State from "./stateManagement/State"
-import Screen from "./graphics/Screen"
-import StateManager from "./stateManagement/StateManager"
+import { AwilixContainer, Lifetime, LifetimeType, asClass, asFunction, createContainer } from "awilix"
+import { GameOptions, SceneInstanceMode, SceneRegister } from "./types"
+import SceneManager from "./SceneManager"
+import ComponentHandler from "./components/handlers/ComponentHandler"
+import ScreenComponentHandler from "./components/handlers/ScreenComponentHandler"
+import Screen from "./Screen"
+import TweenComponentHandler from "./components/handlers/TweenComponentHandler"
 import Keyboard from "./input/Keyboard"
-import TweenManager from "./animation/TweenManager"
-
-export type GameOptions = {
-  width: number
-  height: number
-  fps: number
-}
+import CommandManager from "./commands/CommandManager"
+import Throttle from "./Throttle"
+import InputMapperFactory from "./input/InputMapperFactory"
 
 export const gameOptionsDefault: GameOptions = {
   width: 720,
@@ -17,17 +17,14 @@ export const gameOptionsDefault: GameOptions = {
 }
 
 class Game extends EventTarget {
-  el: HTMLElement
-  options: GameOptions
-  screen: Screen
-  stateManager: StateManager
-  keyboard: Keyboard
-  tweenManager: TweenManager
-  running: boolean = false
-  timer?: number
-  lastTick?: DOMHighResTimeStamp
+  private el: HTMLElement
+  private options: GameOptions
+  private running: boolean = false
+  private timer?: number
+  private lastTick?: DOMHighResTimeStamp
+  private container: AwilixContainer
 
-  constructor(el: HTMLElement, options: Partial<GameOptions> = {}) {
+  constructor(el: HTMLElement, sceneRegister: SceneRegister = {}, options: Partial<GameOptions> = {}) {
     super()
     this.el = el
     this.options = {
@@ -35,22 +32,54 @@ class Game extends EventTarget {
       height: options.height ?? gameOptionsDefault.height,
       fps: options.fps ?? gameOptionsDefault.fps,
     }
-    this.screen = new Screen(this.el, {
-      width: this.options.width,
-      height: this.options.height,
+    this.container = createContainer()
+    this.registerServices()
+    this.registerScenes(sceneRegister)
+  }
+
+  
+  registerServices() {
+    this.container.register({
+      'Keyboard': asClass(Keyboard).singleton(),
+      'Screen': asFunction(() => new Screen(this.el, { width: this.options.width, height: this.options.height })).singleton(),
+      'SceneManager': asClass(SceneManager).singleton(),
+      'ComponentHandler': asClass(ComponentHandler).singleton(),
+      'CommandManager': asClass(CommandManager).singleton(),
+      'Throttle': asClass(Throttle).singleton(),
+      'InputMapperFactory': asClass(InputMapperFactory).singleton(),
     })
-    this.stateManager = new StateManager()
-    this.keyboard = new Keyboard()
-    this.tweenManager = new TweenManager()
+    
+    this.container.register({
+      'ScreenComponentHandler': asClass(ScreenComponentHandler).singleton(),
+      'TweenComponentHandler': asClass(TweenComponentHandler).singleton(),
+    })
+  }
+  private getSceneNameAsService(sceneName: string) {
+    return `${sceneName}-scene`
   }
 
-  get screenRoot() {
-    return this.screen.root
+  registerScenes(sceneRegister: SceneRegister) {
+    const registration = Object.keys(sceneRegister).reduce((acc, name) => {
+      const { sceneFactory, mode } = sceneRegister[name]
+      const modeToLifetimeMap: Record<SceneInstanceMode, LifetimeType> = {
+        'INSTANCE': Lifetime.TRANSIENT,
+        'SINGLETON': Lifetime.SINGLETON,
+      }
+      return {
+        ...acc,
+        [this.getSceneNameAsService(name)]: asFunction(sceneFactory, { lifetime: modeToLifetimeMap[mode] })
+      }
+    }, {})
+    this.container.register(registration)
   }
 
-  run(initialState?: State) {
+  run(initialScene: string) {
     if (this.running) throw new Error('Game is already running')
-    if (initialState) this.stateManager.push(initialState)
+    if (initialScene) {
+      const scene = this.container.resolve(this.getSceneNameAsService(initialScene))
+      const sm = this.container.resolve('SceneManager')
+      sm.push(scene)
+    }
     this.running = true
     this.timer = requestAnimationFrame(this.tick.bind(this))
   }
@@ -63,7 +92,7 @@ class Game extends EventTarget {
       this.running = false
     }
   }
-  
+
   tick(ts: DOMHighResTimeStamp) {
     this.timer = requestAnimationFrame(this.tick.bind(this))
     if (!this.lastTick) this.lastTick = ts;
@@ -71,10 +100,16 @@ class Game extends EventTarget {
     this.lastTick = ts;
     const requiredElapsed = 1_000 / this.options.fps
     const delta = elapsed > 0 ? requiredElapsed / elapsed : 1;
-    this.stateManager.state?.update(elapsed, delta)
-    this.tweenManager.update(elapsed)
-    this.screen.render()
+    const sm = this.container.resolve('SceneManager')
+    if (!sm.scene) return
+    const screen = this.container.resolve('Screen')
+    screen.clear()
+    sm.scene.update(elapsed, delta)
+    const ch = this.container.resolve('ComponentHandler')
+    ch.update(elapsed, delta, sm.scene.children)
+    // this.tweenManager.update(elapsed)
+    // this.screen.render()
   }
 }
 
-export default Game;
+export default Game

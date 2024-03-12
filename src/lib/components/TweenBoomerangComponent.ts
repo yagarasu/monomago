@@ -1,13 +1,11 @@
 import { clamp } from '../math'
-import Tween from './Tween'
-import { TweenEvent, TweenEventTypes } from './TweenEvent'
+import TweenComponent from './TweenComponent'
 
-class TweenBoomerang<T> extends Tween<T> {
+class TweenBoomerangComponent<T extends object = {}> extends TweenComponent<T> {
   reverse = false
   update(elapsed: number): void {
     if (this.done) return
     if (!this.enabled) return
-    if (this.elapsed === 0) this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_START, { startedAt: performance.now() }))
     return (this.reverse)
       ? this.updateReverse(elapsed)
       : this.updateForward(elapsed)
@@ -19,7 +17,6 @@ class TweenBoomerang<T> extends Tween<T> {
     this.updateValuesForT(t, elapsed)
     if (t === 1) {
       this.reverse = true
-      this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_END, { endedAt: performance.now() }))
     }
   }
 
@@ -29,9 +26,8 @@ class TweenBoomerang<T> extends Tween<T> {
     this.updateValuesForT(t, elapsed)
     if (t === 0) {
       this.reverse = false
-      this.dispatchEvent(new TweenEvent(TweenEventTypes.TWEEN_END, { endedAt: performance.now() }))
     }
   }
 }
 
-export default TweenBoomerang
+export default TweenBoomerangComponent

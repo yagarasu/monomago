@@ -1,5 +1,5 @@
 class Throttle {
-  _throttledFunctions = new Map<string, CallableFunction>()
+  private throttledFunctions = new Map<string, CallableFunction>()
 
   throttleFunction(id: string, throttleTime: number, fn: CallableFunction) {
     let lastCall: number | undefined
@@ -9,15 +9,15 @@ class Throttle {
       fn(...args)
       lastCall = now
     }
-    this._throttledFunctions.set(id, handler)
+    this.throttledFunctions.set(id, handler)
   }
 
   unthrottleFunction(id: string) {
-    this._throttledFunctions.delete(id)
+    this.throttledFunctions.delete(id)
   }
   
   getHandler(id: string) {
-    return this._throttledFunctions.get(id)
+    return this.throttledFunctions.get(id)
   }
 
   call(id: string, ...args: unknown[]) {
@@ -26,4 +26,4 @@ class Throttle {
   }
 }
 
-export default new Throttle()
+export default Throttle

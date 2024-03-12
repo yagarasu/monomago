@@ -1,13 +1,14 @@
-import ScreenElement from "./ScreenElement";
-import { AnimationDefinition, Rect, Renderable } from "./types";
+import { ScreenComponent } from "../handlers/ScreenComponentHandler";
+import { AnimationDefinition, Rect } from "../../types";
 
-class AnimatedSprite extends ScreenElement implements Renderable {
+class AnimatedSpriteComponent implements ScreenComponent {
   imgUrl: string
   img: HTMLImageElement
   width: number = 0
   height: number = 0
   atlas: Rect[]
   animations: Record<string, AnimationDefinition>
+  position = { x: 0, y: 0 }
   
   ready = false
   currentAnimation?: string
@@ -17,16 +18,19 @@ class AnimatedSprite extends ScreenElement implements Renderable {
   
   imageSmoothing = false
 
+  get handler() {
+    return 'ScreenComponentHandler'
+  }
+
   constructor(imgUrl: string, x: number = 0, y: number = 0, width: number = 0, height: number = 0, atlas: Rect[] = [], animations: Record<string, AnimationDefinition> = {}) {
-    super()
     this.imgUrl = imgUrl
     this.img = new Image()
     this.img.src = imgUrl
     this.img.addEventListener('load', () => {
       this.ready = true
     })
-    this.x = x
-    this.y = y
+    this.position.x = x
+    this.position.y = y
     this.width = width
     this.height = height
     this.atlas = atlas
@@ -58,11 +62,11 @@ class AnimatedSprite extends ScreenElement implements Renderable {
     this.update()
     ctx.save()
     ctx.imageSmoothingEnabled = this.imageSmoothing
-    ctx.translate(this.x, this.y)
+    ctx.translate(this.position.x, this.position.y)
     const cropArea = this.atlas[indices[this.currentAnimationFrame]]
     ctx.drawImage(this.img, cropArea.x, cropArea.y, cropArea.width, cropArea.height, 0, 0, this.width, this.height)
     ctx.restore()
   }
 }
 
-export default AnimatedSprite
+export default AnimatedSpriteComponent

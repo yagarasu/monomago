@@ -42,15 +42,8 @@ class Keyboard {
     return this.keys[key]
   }
 
-  getDirectionVector() {
-    let x = 0, y = 0
-    if (this.isKeyPressed('ArrowLeft')) x--
-    if (this.isKeyPressed('ArrowRight')) x++
-    if (this.isKeyPressed('ArrowUp')) y--
-    if (this.isKeyPressed('ArrowDown')) y++
-    const v = new Vector(x, y)
-    v.normalize()
-    return v
+  getPressedKeys() {
+    return Object.keys(this.keys)
   }
 }
 
