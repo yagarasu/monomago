@@ -4,6 +4,11 @@ import SceneManager from "./SceneManager"
 import ComponentHandler from "./components/handlers/ComponentHandler"
 import ScreenComponentHandler from "./components/handlers/ScreenComponentHandler"
 import Screen from "./Screen"
+import TweenComponentHandler from "./components/handlers/TweenComponentHandler"
+import Keyboard from "./input/Keyboard"
+import CommandManager from "./commands/CommandManager"
+import Throttle from "./Throttle"
+import InputMapperFactory from "./input/InputMapperFactory"
 
 export const gameOptionsDefault: GameOptions = {
   width: 720,
@@ -32,16 +37,25 @@ class Game extends EventTarget {
     this.registerScenes(sceneRegister)
   }
 
+  
   registerServices() {
     this.container.register({
-      'Screen': asFunction(() => new Screen(this.el, { width: 720, height: 480 }), { lifetime: Lifetime.SINGLETON }),
-      'SceneManager': asClass(SceneManager, { lifetime: Lifetime.SINGLETON }),
-      'ComponentHandler': asClass(ComponentHandler, { lifetime: Lifetime.SINGLETON }),
+      'Keyboard': asClass(Keyboard).singleton(),
+      'Screen': asFunction(() => new Screen(this.el, { width: this.options.width, height: this.options.height })).singleton(),
+      'SceneManager': asClass(SceneManager).singleton(),
+      'ComponentHandler': asClass(ComponentHandler).singleton(),
+      'CommandManager': asClass(CommandManager).singleton(),
+      'Throttle': asClass(Throttle).singleton(),
+      'InputMapperFactory': asClass(InputMapperFactory).singleton(),
     })
-
+    
     this.container.register({
-      'ScreenComponentHandler': asClass(ScreenComponentHandler, { lifetime: Lifetime.SINGLETON }),
+      'ScreenComponentHandler': asClass(ScreenComponentHandler).singleton(),
+      'TweenComponentHandler': asClass(TweenComponentHandler).singleton(),
     })
+  }
+  private getSceneNameAsService(sceneName: string) {
+    return `${sceneName}-scene`
   }
 
   registerScenes(sceneRegister: SceneRegister) {
@@ -53,7 +67,7 @@ class Game extends EventTarget {
       }
       return {
         ...acc,
-        [name + '-scene']: asFunction(sceneFactory, { lifetime: modeToLifetimeMap[mode] })
+        [this.getSceneNameAsService(name)]: asFunction(sceneFactory, { lifetime: modeToLifetimeMap[mode] })
       }
     }, {})
     this.container.register(registration)
@@ -62,7 +76,7 @@ class Game extends EventTarget {
   run(initialScene: string) {
     if (this.running) throw new Error('Game is already running')
     if (initialScene) {
-      const scene = this.container.resolve(initialScene + '-scene')
+      const scene = this.container.resolve(this.getSceneNameAsService(initialScene))
       const sm = this.container.resolve('SceneManager')
       sm.push(scene)
     }
@@ -88,6 +102,8 @@ class Game extends EventTarget {
     const delta = elapsed > 0 ? requiredElapsed / elapsed : 1;
     const sm = this.container.resolve('SceneManager')
     if (!sm.scene) return
+    const screen = this.container.resolve('Screen')
+    screen.clear()
     sm.scene.update(elapsed, delta)
     const ch = this.container.resolve('ComponentHandler')
     ch.update(elapsed, delta, sm.scene.children)

@@ -1,33 +1,32 @@
 import Element from "../../lib/Element";
 import Scene from "../../lib/Scene";
-import RectComponent from "../../lib/components/RectComponent";
+import ParagraphComponent from "../../lib/components/screenComponents/ParagraphComponent";
+import Keyboard from "../../lib/input/Keyboard";
+
+type InfoSceneDependencies = {
+  Keyboard: Keyboard,
+}
 
 class InfoScene extends Scene {
-  constructor() {
+  keyboard: Keyboard
+
+  constructor({ Keyboard }: InfoSceneDependencies) {
     super()
+    this.keyboard = Keyboard
     this.children = [
       new Element([
-        new RectComponent(10, 10, 50, 50)
+        (new ParagraphComponent('This is a demo proyect to showcase the features that Monomago provides.'))
       ])
     ]
   }
-  update() {
-    // console.log('>> update')
-  }
-  setup() {
-    console.log('>> setup')
-  }
-  teardown() {
-    console.log('>> teardown')
-  }
-  pause() {
-    console.log('>> pause')
-  }
-  resume() {
-    console.log('>> resume')
+
+  update(_elapsed: number, _delta: number) {
+    if (this.keyboard.isKeyPressed('Escape')) {
+      console.log('>> update')
+    }
   }
 }
 
-export const infoSceneFactory = () => new InfoScene()
+export const infoSceneFactory = (cradle: any) => new InfoScene(cradle)
 
 export default InfoScene

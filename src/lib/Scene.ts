@@ -4,7 +4,7 @@ class Scene {
   children: Element[] = []
   
   setup() {}
-  update() {}
+  update(_elapsed: number, _delta: number) {}
   teardown() {}
   pause() {}
   resume() {}

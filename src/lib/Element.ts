@@ -9,6 +9,14 @@ class Element {
     this.id = uuid()
     this.components = components
   }
+
+  addComponent(component: Component) {
+    this.components.push(component)
+  }
+
+  setComponents(components: Component[]) {
+    this.components = components
+  }
 }
 
 export default Element

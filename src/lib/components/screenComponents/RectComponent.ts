@@ -1,4 +1,6 @@
-class RectComponent {
+import { ScreenComponent } from "../handlers/ScreenComponentHandler"
+
+class RectComponent implements ScreenComponent {
   position = { x: 10, y: 10 }
   size = { width: 50, height: 50 }
   fill: string = 'red'

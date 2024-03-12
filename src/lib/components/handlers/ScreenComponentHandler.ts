@@ -2,6 +2,7 @@ import Screen from "../../Screen";
 import { Cradle } from "../../types";
 
 export interface ScreenComponent {
+  position: { x: number, y: number }
   render(context: CanvasRenderingContext2D): void
 }
 
