@@ -1,4 +1,4 @@
-import { AwilixContainer, Lifetime, LifetimeType, asClass, asFunction, createContainer } from "awilix"
+import { AwilixContainer, Lifetime, LifetimeType, asClass, asFunction, asValue, createContainer } from "awilix"
 import { GameOptions, SceneInstanceMode, SceneRegister } from "./types"
 import SceneManager from "./SceneManager"
 import ComponentHandler from "./components/handlers/ComponentHandler"
@@ -40,6 +40,7 @@ class Game extends EventTarget {
   
   registerServices() {
     this.container.register({
+      'Game': asValue(this),
       'Keyboard': asClass(Keyboard).singleton(),
       'Screen': asFunction(() => new Screen(this.el, { width: this.options.width, height: this.options.height })).singleton(),
       'SceneManager': asClass(SceneManager).singleton(),

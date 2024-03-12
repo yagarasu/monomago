@@ -11,4 +11,4 @@ const game = new Game(el, {
   'info': { sceneFactory: infoSceneFactory, mode: 'INSTANCE' },
 })
 
-game.run('info')
+game.run('menu')

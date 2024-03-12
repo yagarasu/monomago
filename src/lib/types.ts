@@ -34,7 +34,6 @@ export type AnimationDefinition = {
 }
 
 export interface Command {
-  type: string
   execute: (elapsed: number, delta: number) => void
 }
 export type CommandCreator = (...args: any[]) => Command
